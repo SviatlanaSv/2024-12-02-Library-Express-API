@@ -10,10 +10,6 @@ app.use(bodyParser.json());
 // In-memory data store
 const users = {};
 
-// Utility functions for validation
-const isValidUsername = (username) => /^[a-zA-Z]+$/.test(username); 
-const isValidPassword = (password) => /^[a-zA-Z0-9]{8,12}$/.test(password); 
-
 // Routes
 // Register a user
 app.post('/register', (req, res) => {
@@ -21,14 +17,6 @@ app.post('/register', (req, res) => {
 
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and password are required.' });
-    }
-
-    if (!isValidUsername(username)) {
-        return res.status(400).json({ message: 'Username must consist of letters only.' });
-    }
-
-    if (!isValidPassword(password)) {
-        return res.status(400).json({ message: 'Password must be 8-12 characters long and contain only letters and numbers.' });
     }
 
     if (users[username]) {

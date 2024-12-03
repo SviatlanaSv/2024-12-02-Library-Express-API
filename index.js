@@ -11,8 +11,8 @@ app.use(bodyParser.json());
 const users = {};
 
 // Utility functions for validation
-const isValidUsername = (username) => /^[a-zA-Z]+$/.test(username); // Only letters
-const isValidPassword = (password) => /^[a-zA-Z0-9]{8,12}$/.test(password); // 8-12 chars, letters and digits
+const isValidUsername = (username) => /^[a-zA-Z]+$/.test(username); 
+const isValidPassword = (password) => /^[a-zA-Z0-9]{8,12}$/.test(password); 
 
 // Routes
 // Register a user

@@ -34,4 +34,4 @@ jobs:
       # Step 5: Run Postman tests with Newman
       - name: Run Postman tests with Newman
         run: |
-          npx newman run "tests/Library Express API.postman_collection.json" --reporters cli
+          npx newman run "Library Express API.postman_collection.json" --reporters cli

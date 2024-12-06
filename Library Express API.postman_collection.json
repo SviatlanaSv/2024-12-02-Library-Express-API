@@ -7,209 +7,1085 @@
 	},
 	"item": [
 		{
-			"name": "Register New User",
+			"name": "1. User Registration",
 			"item": [
 				{
-					"name": "Registration Successful",
-					"event": [
+					"name": "1.1 Successful Registration",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response status code is 201\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(201);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response time is less than 300ms\", function () {\r",
-									"  pm.expect(pm.response.responseTime).to.be.below(300);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response has the required fields\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"\r",
-									"    pm.expect(responseData).to.be.an('object');\r",
-									"    pm.expect(responseData.message).to.exist;\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"Angelika\",\r\n    \"password\": \"Chacha009\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"name": "1.1.1 Register New User Successfully",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 201\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(201);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response time is less than 300ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(300);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response message is correct\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.message).to.exist.and.to.be.eq(\"User registered successfully.\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Get the current timestamp to ensure uniqueness\r",
+											"let timestamp = new Date().getTime();\r",
+											"\r",
+											"// Generate a random string for the password\r",
+											"function generateRandomPassword(length) {\r",
+											"    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';\r",
+											"    let result = '';\r",
+											"    for (let i = 0; i < length; i++) {\r",
+											"        result += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+											"    }\r",
+											"    return result;\r",
+											"}\r",
+											"\r",
+											"// Generates a 12-character random password\r",
+											"let passwordForRegistration = generateRandomPassword(12); \r",
+											"\r",
+											"// Modify the username to make it unique\r",
+											"let baseUsername = \"Angelika\";\r",
+											"let usernameForRegistration = `${baseUsername}_${timestamp}`;\r",
+											"\r",
+											"// Set the updated username and password in the request body\r",
+											"pm.collectionVariables.set(\"usernameForReg\", usernameForRegistration);\r",
+											"pm.collectionVariables.set(\"passwordForReg\", passwordForRegistration);\r",
+											"\r",
+											"// Update the request body dynamically\r",
+											"let body = {\r",
+											"    \"username\": usernameForRegistration,\r",
+											"    \"password\": passwordForRegistration\r",
+											"};\r",
+											"\r",
+											"// Set the updated body to the request\r",
+											"pm.request.body.raw = JSON.stringify(body);\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/register",
-							"protocol": "http",
-							"host": [
-								"localhost"
 							],
-							"port": "3000",
-							"path": [
-								"register"
-							]
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1.1.2. Get User By Username",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response time is within an acceptable range\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(300);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response has the required fields - username and password\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData).to.be.an('object')\r",
+											"    pm.expect(responseData).to.have.property('username');\r",
+											"    pm.expect(responseData).to.have.property('password');\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Username and password match the registered values\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    const expectedUsername = pm.collectionVariables.get(\"usernameForReg\");\r",
+											"    const expectedPassword = pm.collectionVariables.get(\"passwordForReg\");\r",
+											"\r",
+											"    pm.expect(responseData.username).to.eql(expectedUsername);\r",
+											"    pm.expect(responseData.password).to.eql(expectedPassword);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/users/{{usernameForReg}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users",
+										"{{usernameForReg}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Contains Registered User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"The registered user exists in the list of all users\", function () {\r",
+											"    const responseData = pm.response.json(); \r",
+											"    const expectedUsername = pm.collectionVariables.get(\"usernameForReg\");\r",
+											"    const expectedPassword = pm.collectionVariables.get(\"passwordForReg\");\r",
+											"\r",
+											"    // Check if the response contains an array of users\r",
+											"    const users = responseData.users; // Assume the response structure { users: [...] }\r",
+											"    pm.expect(users).to.be.an(\"array\"); // Make sure it's an array\r",
+											"\r",
+											"    let foundUser = false;\r",
+											"\r",
+											"    users.forEach((user) => {\r",
+											"        if (user.username === expectedUsername && user.password === expectedPassword) {\r",
+											"            foundUser = true;\r",
+											"        }\r",
+											"    });\r",
+											"\r",
+											"    pm.expect(foundUser).to.be.true;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/users",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "Error: No username or password",
-					"event": [
+					"name": "1.2 Unsuccessful Registration",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response status code is 400\", function () {\r",
-									"  pm.expect(pm.response.code).to.equal(400);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response has the required fields\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('object');\r",
-									"    pm.expect(responseData.message).to.exist;\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Message is a non-empty string\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Message should not be empty\");\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response time is less than 500ms\", function () {\r",
-									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n        \"password\": \"Chacha009\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"name": "1.2.1 User Already Exists",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 400\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response time is less than 500ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Error message is correct\", function () {\r",
+											"  const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData.message).to.exist.to.be.a('string').and.to.be.eql(\"User already exists.\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Content-Type header is application/json\", function () {\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/register",
-							"protocol": "http",
-							"host": [
-								"localhost"
 							],
-							"port": "3000",
-							"path": [
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Error: User already exists",
-					"event": [
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"username\": \"{{usernameForReg}}\",\r\n        \"password\": \"{{passwordForReg}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response status code is 400\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(400);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response time is less than 500ms\", function () {\r",
-									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response has the required fields\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('object');\r",
-									"    pm.expect(responseData.message).to.exist;\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Message is a non-empty string\", function () {\r",
-									"  const responseData = pm.response.json();\r",
-									"\r",
-									"  pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Message should be a non-empty string\");\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Content-Type header is application/json\", function () {\r",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n        \"username\": \"Angelika\",\r\n        \"password\": \"Chacha009\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"name": "1.2.2 Missing Username or Password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 400\", function () {\r",
+											"  pm.expect(pm.response.code).to.equal(400);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Error message is correct\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData.message).to.exist.and.to.be.a('string').and.to.be.eql(\"Username and password are required.\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response time is less than 500ms\", function () {\r",
+											"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/register",
-							"protocol": "http",
-							"host": [
-								"localhost"
 							],
-							"port": "3000",
-							"path": [
-								"register"
-							]
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"password\": \"Chacha009\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				}
 			]
 		},
 		{
-			"name": "User Password Retrieval",
+			"name": "2. User Password Retrieval",
 			"item": [
 				{
-					"name": "Password retrieval successful",
+					"name": "2.1 Successful Retrieval",
+					"item": [
+						{
+							"name": "2.1.1 Register User for Password Retrieval",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Get the current timestamp to ensure uniqueness\r",
+											"let timestamp = new Date().getTime();\r",
+											"\r",
+											"// Generate a random string for the password\r",
+											"function generateRandomPassword(length) {\r",
+											"    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';\r",
+											"    let result = '';\r",
+											"    for (let i = 0; i < length; i++) {\r",
+											"        result += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+											"    }\r",
+											"    return result;\r",
+											"}\r",
+											"\r",
+											"// Generates a 12-character random password\r",
+											"let passwordForRetrieval = generateRandomPassword(12); \r",
+											"\r",
+											"// Modify the username to make it unique\r",
+											"let baseUsername = \"Angelika\";\r",
+											"let usernameForRetrieval = `${baseUsername}_${timestamp}`;\r",
+											"\r",
+											"// Set the updated username and password in the request body\r",
+											"pm.collectionVariables.set(\"usernameForRetrieval\", usernameForRetrieval);\r",
+											"pm.collectionVariables.set(\"passwordForRetrieval\", passwordForRetrieval);\r",
+											"\r",
+											"// Update the request body dynamically\r",
+											"let body = {\r",
+											"    \"username\": usernameForRetrieval,\r",
+											"    \"password\": passwordForRetrieval\r",
+											"};\r",
+											"\r",
+											"// Set the updated body to the request\r",
+											"pm.request.body.raw = JSON.stringify(body);\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1.2 Password Retrieval Successful",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response time is less than 200ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Password is a non-empty string\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData.password).to.be.a('string').and.to.be.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Password matches the registered value\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    const expectedPassword = pm.collectionVariables.get(\"passwordForRetrieval\");\r",
+											"\r",
+											"    pm.expect(responseData.password).to.eql(expectedPassword);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/password/{{usernameForRetrieval}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"password",
+										"{{usernameForRetrieval}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "2.2 Unsuccessful Retrieval",
+					"item": [
+						{
+							"name": "2.2.1 User Not Found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 404\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Error message is correct\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData.message).to.be.a('string').and.to.be.eql(\"User not found.\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response time is less than 500ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/password/Alex",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"password",
+										"Alex"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "3. User Login",
+			"item": [
+				{
+					"name": "3.1 Successful Login",
+					"item": [
+						{
+							"name": "3.1.1 Register New User for Login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Get the current timestamp to ensure uniqueness\r",
+											"let timestamp = new Date().getTime();\r",
+											"\r",
+											"// Generate a random string for the password\r",
+											"function generateRandomPassword(length) {\r",
+											"    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';\r",
+											"    let result = '';\r",
+											"    for (let i = 0; i < length; i++) {\r",
+											"        result += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+											"    }\r",
+											"    return result;\r",
+											"}\r",
+											"\r",
+											"// Generates a 12-character random password\r",
+											"let passwordForLogin = generateRandomPassword(12); \r",
+											"\r",
+											"// Modify the username to make it unique\r",
+											"let baseUsername = \"Angelika\";\r",
+											"let usernameForLogin = `${baseUsername}_${timestamp}`;\r",
+											"\r",
+											"// Set the updated username and password in the request body\r",
+											"pm.collectionVariables.set(\"usernameForLogin\", usernameForLogin);\r",
+											"pm.collectionVariables.set(\"passwordForLogin\", passwordForLogin);\r",
+											"\r",
+											"// Update the request body dynamically\r",
+											"let body = {\r",
+											"    \"username\": usernameForLogin,\r",
+											"    \"password\": passwordForLogin\r",
+											"};\r",
+											"\r",
+											"// Set the updated body to the request\r",
+											"pm.request.body.raw = JSON.stringify(body);\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.1.2 Login Successful",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Content-Type header is application/json\", function () {\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Message is correct\", function () {\r",
+											"  const responseData = pm.response.json();\r",
+											"  \r",
+											"  pm.expect(responseData.message).to.be.a('string').and.to.be.eql(\"Login successful.\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response time is less than 200ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"packages": {},
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"{{usernameForLogin}}\",\r\n    \"password\": \"{{passwordForLogin}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "3.2 Unseccessful Login",
+					"item": [
+						{
+							"name": "3.2.1 Missing Username or Password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 400\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Error message is correct\", function () {\r",
+											"  const responseData = pm.response.json();\r",
+											"  \r",
+											"  pm.expect(responseData.message).to.be.a('string');\r",
+											"  pm.expect(responseData.message).to.be.eql(\"Username and password are required.\").and.to.be.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Content-Type header is application/json\", function () {\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response time is less than 500ms\", function () {\r",
+											"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \r\n    \"password\": \"Chacha009\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.2.2 Invalid Username or Password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 401\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Error message is correct\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData.message).to.be.a('string').and.to.be.eql(\"Invalid username or password.\").and.to.be.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response time is less than 500ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"Alex\",\r\n    \"password\": \"Chacha009\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "4. Get a User",
+			"item": [
+				{
+					"name": "4.1 Successful User Retrieval",
+					"item": [
+						{
+							"name": "4.1.1 Register User for User Retrieval",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Get the current timestamp to ensure uniqueness\r",
+											"let timestamp = new Date().getTime();\r",
+											"\r",
+											"// Generate a random string for the password\r",
+											"function generateRandomPassword(length) {\r",
+											"    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';\r",
+											"    let result = '';\r",
+											"    for (let i = 0; i < length; i++) {\r",
+											"        result += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+											"    }\r",
+											"    return result;\r",
+											"}\r",
+											"\r",
+											"// Generates a 12-character random password\r",
+											"let passwordForGetUser = generateRandomPassword(12); \r",
+											"\r",
+											"// Modify the username to make it unique\r",
+											"let baseUsername = \"Angelika\";\r",
+											"let usernameForGetUser = `${baseUsername}_${timestamp}`;\r",
+											"\r",
+											"// Set the updated username and password in the request body\r",
+											"pm.collectionVariables.set(\"usernameForGetUser\", usernameForGetUser);\r",
+											"pm.collectionVariables.set(\"passwordForGetUser\", passwordForGetUser);\r",
+											"\r",
+											"// Update the request body dynamically\r",
+											"let body = {\r",
+											"    \"username\": usernameForGetUser,\r",
+											"    \"password\": passwordForGetUser\r",
+											"};\r",
+											"\r",
+											"// Set the updated body to the request\r",
+											"pm.request.body.raw = JSON.stringify(body);\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.1.2 Get User - Successful Cases",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Password matches the registered values\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    const expectedUsername = pm.collectionVariables.get(\"usernameForGetUser\");\r",
+											"    const expectedPassword = pm.collectionVariables.get(\"passwordForGetUser\");\r",
+											"\r",
+											"    pm.expect(responseData.username).to.eql(expectedUsername);\r",
+											"    pm.expect(responseData.password).to.eql(expectedPassword);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response time is less than 200ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"message\": \"User not found.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/users/{{usernameForGetUser}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users",
+										"{{usernameForGetUser}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "4.2 Unsuccessful User Retrieval",
+					"item": [
+						{
+							"name": "4.2.1 Get User - Not Found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 404\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(404);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response message is correct.\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.message).to.be.a('string').and.to.be.eql(\"User not found.\")\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response time is within an acceptable range\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/users/Dora121",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users",
+										"Dora121"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "5 . Get All Users",
+			"item": [
+				{
+					"name": "5.1 Retrieval All Users",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
 									"pm.test(\"Response status code is 200\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"    pm.response.to.have.status(200);\r",
 									"});\r",
 									"\r",
 									"\r",
@@ -218,90 +1094,26 @@
 									"});\r",
 									"\r",
 									"\r",
-									"pm.test(\"Password field exists in the response\", function () {\r",
-									"  const responseData = pm.response.json();\r",
-									"  \r",
-									"  pm.expect(responseData).to.be.an('object');\r",
-									"  pm.expect(responseData.password).to.exist;\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Password is a non-empty string\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData.password).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Password should not be empty\");\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Content-Type header is application/json\", function () {\r",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/password/Angelika",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"password",
-								"Angelika"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Error: User not found",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response status code is 404\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(404);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response has the required fields\", function () {\r",
+									"pm.test(\"Validate the structure of the response JSON\", function () {\r",
 									"    const responseData = pm.response.json();\r",
 									"    \r",
 									"    pm.expect(responseData).to.be.an('object');\r",
-									"    pm.expect(responseData.message).to.exist;\r",
+									"    pm.expect(responseData).to.have.property('users').that.is.an('array');\r",
+									"\r",
+									"    responseData.users.forEach(user => {\r",
+									"        pm.expect(user).to.have.property('username');\r",
+									"        pm.expect(user).to.have.property('password');\r",
+									"    });\r",
 									"});\r",
 									"\r",
 									"\r",
-									"pm.test(\"Message is a non-empty string\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Message should not be empty\");\r",
-									"});\r",
 									"\r",
+									"pm.test(\"Each key in the response JSON is in the expected format\", function () {\r",
+									"    const responseData = pm.response.json().users[0];\r",
 									"\r",
-									"pm.test(\"Response time is less than 500ms\", function () {\r",
-									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.username).to.match(/Angelika_\\d{13}/);\r",
+									"    pm.expect(responseData.password).to.match(/[A-Za-z0-9!@#$%^&*()]{12}/);\r",
 									"});\r",
 									""
 								],
@@ -310,31 +1122,18 @@
 							}
 						}
 					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "http://localhost:3000/password/Alex",
+							"raw": "http://localhost:3000/users",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"password",
-								"Alex"
+								"users"
 							]
 						}
 					},
@@ -343,177 +1142,663 @@
 			]
 		},
 		{
-			"name": "Login",
+			"name": "6. Update User Info",
 			"item": [
 				{
-					"name": "Login Successful",
-					"event": [
+					"name": "6.1 Successful Update",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response status code is 200\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(200);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Content-Type header is application/json\", function () {\r",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response body has the required field - message\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.have.property('message');\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Message is a non-empty string\", function () {\r",
-									"  const responseData = pm.response.json();\r",
-									"  \r",
-									"  pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Message should not be empty\");\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response time is less than 200ms\", function () {\r",
-									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"Angelika\",\r\n    \"password\": \"Chacha009\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"name": "6.1.1 Register New User for Update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Get the current timestamp to ensure uniqueness\r",
+											"let timestamp = new Date().getTime();\r",
+											"\r",
+											"// Generate a random string for the password\r",
+											"function generateRandomPassword(length) {\r",
+											"    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';\r",
+											"    let result = '';\r",
+											"    for (let i = 0; i < length; i++) {\r",
+											"        result += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+											"    }\r",
+											"    return result;\r",
+											"}\r",
+											"\r",
+											"// Generates a 12-character random password\r",
+											"let passwordForUpdate = generateRandomPassword(12); \r",
+											"\r",
+											"// Modify the username to make it unique\r",
+											"let baseUsername = \"Angelika\";\r",
+											"let usernameForUpdate = `${baseUsername}_${timestamp}`;\r",
+											"\r",
+											"// Set the updated username and password in the request body\r",
+											"pm.collectionVariables.set(\"usernameForUpdate\", usernameForUpdate);\r",
+											"pm.collectionVariables.set(\"passwordForUpdate\", passwordForUpdate);\r",
+											"\r",
+											"// Update the request body dynamically\r",
+											"let body = {\r",
+											"    \"username\": usernameForUpdate,\r",
+											"    \"password\": passwordForUpdate\r",
+											"};\r",
+											"\r",
+											"// Set the updated body to the request\r",
+											"pm.request.body.raw = JSON.stringify(body);\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
 							],
-							"port": "3000",
-							"path": [
-								"login"
-							]
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6.1.2 Update Existing User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response has the required fields - message and username\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.message).to.exist.and.to.be.eql(\"User updated successfully.\");\r",
+											"    pm.expect(responseData.username).to.exist.and.is.not.empty;\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Username is a non-empty string\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData.username).to.be.a('string').and.is.not.empty;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response time is less than 500ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"newUsername\": \"Karina\"\r\n   \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/users/{{usernameForUpdate}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users",
+										"{{usernameForUpdate}}"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "Error: No user name or password",
-					"event": [
+					"name": "6.2 Unsuccessful Update",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Response status code is 400\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(400);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response has the required field - message\", function () {\r",
-									"  const responseData = pm.response.json();\r",
-									"  \r",
-									"  pm.expect(responseData).to.be.an('object');\r",
-									"  pm.expect(responseData.message).to.exist;\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Content-Type header is application/json\", function () {\r",
-									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response time is less than 500ms\", function () {\r",
-									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \r\n    \"password\": \"Chacha009\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"name": "6.2.1 Update Non-Existent User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 404\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(404);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response has the required field - message\", function () {\r",
+											"  const responseData = pm.response.json();\r",
+											"  \r",
+											"  pm.expect(responseData).to.be.an('object');\r",
+											"  pm.expect(responseData.message).to.exist.and.to.be.a('string').and.to.be.eql(\"User not found.\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response time is less than 200ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Content-Type header is application/json\", function () {\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
 							],
-							"port": "3000",
-							"path": [
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Error: invalid user name or password",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"Alex\",\r\n    \"password\": \"Chacha009\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"newUsername\": \"Simon\"\r\n   \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/users/Frank_Toon",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users",
+										"Frank_Toon"
+									]
 								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"login"
-							]
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				}
 			]
+		},
+		{
+			"name": "7. Delete a User",
+			"item": [
+				{
+					"name": "7.1 Successful Deletion",
+					"item": [
+						{
+							"name": "7.1.1 Registration New User for Deletion",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Get the current timestamp to ensure uniqueness\r",
+											"let timestamp = new Date().getTime();\r",
+											"\r",
+											"// Generate a random string for the password\r",
+											"function generateRandomPassword(length) {\r",
+											"    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';\r",
+											"    let result = '';\r",
+											"    for (let i = 0; i < length; i++) {\r",
+											"        result += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+											"    }\r",
+											"    return result;\r",
+											"}\r",
+											"\r",
+											"// Generates a 12-character random password\r",
+											"let passwordForDelete = generateRandomPassword(12); \r",
+											"\r",
+											"// Modify the username to make it unique\r",
+											"let baseUsername = \"Angelika\";\r",
+											"let usernameForDelete = `${baseUsername}_${timestamp}`;\r",
+											"\r",
+											"// Set the updated username and password in the request body\r",
+											"pm.collectionVariables.set(\"usernameForDelete\", usernameForDelete);\r",
+											"pm.collectionVariables.set(\"passwordForDelete\", passwordForDelete);\r",
+											"\r",
+											"//  Update the request body dynamically\r",
+											"let body = {\r",
+											"    \"username\": usernameForDelete,\r",
+											"    \"password\": passwordForDelete\r",
+											"};\r",
+											"\r",
+											"// Set the updated body to the request\r",
+											"pm.request.body.raw = JSON.stringify(body);\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7.1.2 Get User for Deletion",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response has the required fields - username and password\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData).to.have.property('username');\r",
+											"    pm.expect(responseData).to.have.property('password');\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Username and password are non-empty strings\", function () {\r",
+											"  const responseData = pm.response.json();\r",
+											"  \r",
+											"  pm.expect(responseData.username).to.be.a('string').and.is.not.empty;\r",
+											"   pm.expect(responseData.password).to.be.a('string').and.is.not.empty;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/users/{{usernameForDelete}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users",
+										"{{usernameForDelete}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7.1.3 Delete User - Successful Case",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response has the required fields\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.message).to.exist.and.to.be.a('string').and.to.be.eql(\"User deleted successfully.\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response time is less than 500ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/users/{{usernameForDelete}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users",
+										"{{usernameForDelete}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7.1.4 Get Deleted User by Username",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 404\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(404);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response has the required fields\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.message).to.exist;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response message is correct\", function () {\r",
+											"  const responseData = pm.response.json();\r",
+											"  \r",
+											"  pm.expect(responseData.message).to.be.a('string').and.to.be.eql(\"User not found.\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response time is less than 200ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/users/{{usernameForDelete}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users",
+										"{{usernameForDelete}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7.1.5 Get a Deleted User from the All list",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"The deleted user does not exist in the list of all users\", function () {\r",
+											"    const responseData = pm.response.json(); \r",
+											"    const usernameForDelete = pm.collectionVariables.get(\"usernameForDelete\");\r",
+											"    const passwordForDelete = pm.collectionVariables.get(\"passwordForDelete\");\r",
+											"\r",
+											"    \r",
+											"    const users = responseData.users; \r",
+											"   \r",
+											"    pm.expect(users).to.be.an(\"array\"); \r",
+											"\r",
+											"    let foundUser = false;\r",
+											"\r",
+											"    users.forEach((user) => {\r",
+											"        if (user.username === usernameForDelete && user.password === passwordForDelete) {\r",
+											"            foundUser = true;\r",
+											"        }\r",
+											"    });\r",
+											"\r",
+											"    \r",
+											"    pm.expect(foundUser).to.be.false;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/users",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "7.2 Unsuccessful Deletion",
+					"item": [
+						{
+							"name": "7.2.1 User Not Found for Deletion",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 404\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(404);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response time is less than 500ms\", function () {\r",
+											"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response has the required fields and message\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.message).to.exist.and.to.be.a('string').and.to.be.eql(\"User not found.\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/users/Johnny_Depp",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"users",
+										"Johnny_Depp"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "usernameForReg",
+			"value": ""
+		},
+		{
+			"key": "passwordForReg",
+			"value": ""
+		},
+		{
+			"key": "usernameForLogin",
+			"value": ""
+		},
+		{
+			"key": "passwordForLogin",
+			"value": ""
+		},
+		{
+			"key": "usernameForRetrieval",
+			"value": ""
+		},
+		{
+			"key": "passwordForRetrieval",
+			"value": ""
+		},
+		{
+			"key": "usernameForGetUser",
+			"value": ""
+		},
+		{
+			"key": "passwordForGetUser",
+			"value": ""
+		},
+		{
+			"key": "passwordForUpdate",
+			"value": ""
+		},
+		{
+			"key": "usernameForUpdate",
+			"value": ""
+		},
+		{
+			"key": "usernameForDelete",
+			"value": ""
+		},
+		{
+			"key": "passwordForDelete",
+			"value": ""
 		}
 	]
 }

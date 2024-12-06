@@ -8,7 +8,7 @@ const port = 3000;
 app.use(bodyParser.json());
 
 // In-memory data store
-const users = []; // Массив для хранения пользователей
+const users = []; // Array of user objects
 
 // Routes
 // Register a user
@@ -26,7 +26,7 @@ app.post("/register", (req, res) => {
     return res.status(400).json({ message: "User already exists." });
   }
 
-  users.push({ username, password }); // Добавляем нового пользователя в массив
+  users.push({ username, password }); // Add new user to the arrey
   res.status(201).json({ message: "User registered successfully." });
 });
 
@@ -74,7 +74,7 @@ app.get("/users/:username", (req, res) => {
 
 // Get all users
 app.get("/users", (req, res) => {
-  res.json({ users }); // Возвращаем массив пользователей в виде объекта { users: [...] }
+  res.json({ users }); // Return the users array as an object { users: [...] }
 });
 
 // Update a user by username
@@ -87,7 +87,7 @@ app.put("/users/:username", (req, res) => {
     return res.status(404).json({ message: "User not found." });
   }
 
-  // Обновляем данные пользователя
+  // Update user data
   if (newUsername) users[userIndex].username = newUsername;
   if (newPassword) users[userIndex].password = newPassword;
 
@@ -106,7 +106,7 @@ app.delete("/users/:username", (req, res) => {
     return res.status(404).json({ message: "User not found." });
   }
 
-  users.splice(userIndex, 1); // Удаляем пользователя из массива
+  users.splice(userIndex, 1); // Remove a user from the array
   res.json({ message: "User deleted successfully." });
 });
 

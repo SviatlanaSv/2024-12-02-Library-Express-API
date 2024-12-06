@@ -1,4 +1,4 @@
-name: Run Newman Tests
+name: CI - Run Postman Tests
 
 on:
   push:
@@ -7,38 +7,31 @@ on:
   pull_request:
 
 jobs:
-  newman-tests:
+  postman-tests:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repository
-      - name: Checkout repository
+      # Step 1: Checkout the repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Setup Node.js
-      - name: Setup Node.js
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20.17.0"
+          node-version: "20"
 
-      # 3. Install dependencies
+      # Step 3: Install dependencies
       - name: Install dependencies
-        run: |
-          npm install
+        run: npm install
 
-      # 4. Start the API server
+      # Step 4: Start the API server
       - name: Start API Server
         run: |
           node index.js &
-          sleep 5 # Delay to ensure the server starts
+          sleep 5 # Wait for the server to start
 
-      # 5. Run Newman tests
+      # Step 5: Run Postman tests with Newman
       - name: Run Postman tests with Newman
         run: |
-          npx newman run "Library Express API.postman_collection.json"
-
-      # 6. Ensure server shutdown (optional, cleanup)
-      - name: Shutdown server (if needed)
-        if: failure() || success()
-        run: |
-          pkill -f "node index.js"
+          npx newman run "tests/Library Express API.postman_collection.json" --reporters cli

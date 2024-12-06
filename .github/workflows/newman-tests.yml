@@ -1,4 +1,4 @@
-name: Run Postman Tests
+name: Run Newman Tests
 
 on:
   push:
@@ -11,25 +11,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
+      # 1. Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Install Node.js
-      # Node.js используется для установки Newman
+      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: "20.17.0"
 
-      # Step 3: Install Newman
-      # Устанавливаем CLI-инструмент Newman
-      - name: Install Newman
+      # 3. Install dependencies
+      - name: Install dependencies
         run: |
-          npm install -g newman
+          npm install
 
-      # Step 4: Run Newman tests
-      # Указываем путь к коллекции
-      - name: Run Postman tests
+      # 4. Start the API server
+      - name: Start API Server
         run: |
-          newman run "Library Express API.postman_collection.json"
+          node index.js &
+          sleep 5 # Delay to ensure the server starts
+
+      # 5. Run Newman tests
+      - name: Run Postman tests with Newman
+        run: |
+          npx newman run "Library Express API.postman_collection.json"
+
+      # 6. Ensure server shutdown (optional, cleanup)
+      - name: Shutdown server (if needed)
+        if: failure() || success()
+        run: |
+          pkill -f "node index.js"

@@ -12,7 +12,6 @@
   "description": "",
   "dependencies": {
     "body-parser": "^1.20.3",
-    "dotenv": "^16.4.7",
     "express": "^4.21.1",
     "newman": "^6.2.1"
   }

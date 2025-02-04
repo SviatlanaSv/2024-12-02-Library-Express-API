@@ -34,7 +34,7 @@ A simple Node.js-based API for managing user accounts, including user registrati
 
 3. **Start the server**:
     ```bash
-    node index.js
+    npm run dev
     ```
 
    The API will be available at `http://localhost:3000`.
